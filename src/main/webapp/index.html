@@ -1,183 +1,70 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+<head>Speech</head>
+<body>
+<br>
+<button id = "button-play-ws"  value="start">start</button>
+<button id = "button-stop-ws" value="stop">stop</button>
+<br/>
+<div id ="log"></div>
+<div id = "transcription"></div>
+ <script>// Test browser support
+         window.SpeechRecognition = window.SpeechRecognition        ||
+                                    window.webkitSpeechRecognition  ||
+                                    null;
+         if (window.SpeechRecognition === null) {
+            document.getElementById('ws-unsupported').classList.remove('hidden');
+            document.getElementById('button-play-ws').setAttribute('disabled', 'disabled');
+            document.getElementById('button-stop-ws').setAttribute('disabled', 'disabled');
+         } else {
+            var recognizer = new window.SpeechRecognition();
+            var transcription = document.getElementById('transcription');
+            var log = document.getElementById('log');
+            var words;
 
-<head>
+            // Recogniser doesn't stop listening even if the user pauses
+            recognizer.continuous = true;
+            // Start recognising
+            recognizer.onresult = function(event) {
+               transcription.textContent = '';
+               for (var i = event.resultIndex; i < event.results.length; i++) {
+                  if (event.results[i].isFinal) {
+                     words = event.results[i][0].transcript;
+                    // transcription.innerHTML = event.results[i][0].transcript + ' (Confidence: ' + event.results[i][0].confidence + ')';
+                    transcription.innerHTML = words;
+                  } else {
+                     transcription.innerHTML += event.results[i][0].transcript;
+                  }
+               }
+            };
+            // Listen for errors
+            recognizer.onerror = function(event) {
+               log.innerHTML = 'Recognition error: ' + event.message + '<br />' + log.innerHTML;
+               //alert("rec4");
+            };
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+            document.getElementById('button-play-ws').addEventListener('click', function() {
 
-    <title>Vlearn</title>
+               // Set if we need interim results
+               recognizer.interimResults = false;
+              //alert("looged");
+               try{
+                  recognizer.start();
+                  log.innerHTML = 'Recognition started' + '<br />' + log.innerHTML;
+               } catch(ex) {
+                  log.innerHTML = 'Recognition error: ' + ex.message + '<br />' + log.innerHTML;
+               }
+            });
 
-    <!-- Bootstrap Core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Custom CSS -->
-    <link href="css/agency.css" rel="stylesheet">
-    <link href="css/animate.css" rel="stylesheet">
-
-    <!-- Custom Fonts -->
-<!--
--->
-
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-    <style>
-        div.fadeImage{
-            -webkit-animation-name: fadeIn.infinite.1s; /* Chrome, Safari, Opera */
-            -webkit-animation-duration: 4s; /* Chrome, Safari, Opera */
-            animation-name: fadeIn;
-            animation-duration: 1s;
-            animation-iteration-count: infinite;
-        }
-    </style>
-
-</head>
-
-<body id="page-top" class="index">
-
-    
-
-    <!-- Header -->
-    <header>
-        <div class="container">
-            <div class="intro-text">
-                <div class="intro-lead-in">Welcome To</div>
-                <div class="intro-heading">VLearn</div>
-                <div class="fadeImage"><img src="img/voicecapture.png" height="150" width="150" ></div>
-                <a href="#services" class="page-scroll btn btn-xl">Log in</a>
-                <a href="#services" class="page-scroll btn btn-xl">Sign up </a>
-            </div>
-        </div>
-    </header>
-
-    <!-- Services Section -->
-    
-
-    
-
-    <!-- About Section -->
-    <!--<section id="about">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <h2 class="section-heading">About</h2>
-                    <h3 class="section-subheading text-muted">Lorem ipsum dolor sit amet consectetur.</h3>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-12">
-                    <ul class="timeline">
-                        <li>
-                            <div class="timeline-image">
-                                <img class="img-circle img-responsive" src="img/about/1.jpg" alt="">
-                            </div>
-                            <div class="timeline-panel">
-                                <div class="timeline-heading">
-                                    <h4>2009-2011</h4>
-                                    <h4 class="subheading">Our Humble Beginnings</h4>
-                                </div>
-                                <div class="timeline-body">
-                                    <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt ut voluptatum eius sapiente, totam reiciendis temporibus qui quibusdam, recusandae sit vero unde, sed, incidunt et ea quo dolore laudantium consectetur!</p>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="timeline-inverted">
-                            <div class="timeline-image">
-                                <img class="img-circle img-responsive" src="img/about/2.jpg" alt="">
-                            </div>
-                            <div class="timeline-panel">
-                                <div class="timeline-heading">
-                                    <h4>March 2011</h4>
-                                    <h4 class="subheading">An Agency is Born</h4>
-                                </div>
-                                <div class="timeline-body">
-                                    <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt ut voluptatum eius sapiente, totam reiciendis temporibus qui quibusdam, recusandae sit vero unde, sed, incidunt et ea quo dolore laudantium consectetur!</p>
-                                </div>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="timeline-image">
-                                <img class="img-circle img-responsive" src="img/about/3.jpg" alt="">
-                            </div>
-                            <div class="timeline-panel">
-                                <div class="timeline-heading">
-                                    <h4>December 2012</h4>
-                                    <h4 class="subheading">Transition to Full Service</h4>
-                                </div>
-                                <div class="timeline-body">
-                                    <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt ut voluptatum eius sapiente, totam reiciendis temporibus qui quibusdam, recusandae sit vero unde, sed, incidunt et ea quo dolore laudantium consectetur!</p>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="timeline-inverted">
-                            <div class="timeline-image">
-                                <img class="img-circle img-responsive" src="img/about/4.jpg" alt="">
-                            </div>
-                            <div class="timeline-panel">
-                                <div class="timeline-heading">
-                                    <h4>July 2014</h4>
-                                    <h4 class="subheading">Phase Two Expansion</h4>
-                                </div>
-                                <div class="timeline-body">
-                                    <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sunt ut voluptatum eius sapiente, totam reiciendis temporibus qui quibusdam, recusandae sit vero unde, sed, incidunt et ea quo dolore laudantium consectetur!</p>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="timeline-inverted">
-                            <div class="timeline-image">
-                                <h4>Be Part
-                                    <br>Of Our
-                                    <br>Story!</h4>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
--->
-    
-    
-    <footer>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4">
-                    <span class="copyright">Copyright &copy; Your Website 2014</span>
-                </div>
-                <div class="col-md-4">
-                    <ul class="list-inline social-buttons">
-                        <li><a href="#"><i class="fa fa-twitter"></i></a>
-                        </li>
-                        <li><a href="#"><i class="fa fa-facebook"></i></a>
-                        </li>
-                        <li><a href="#"><i class="fa fa-linkedin"></i></a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="col-md-4">
-                    <ul class="list-inline quicklinks">
-                        <li><a href="#">Privacy Policy</a>
-                        </li>
-                        <li><a href="#">Terms of Use</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Portfolio Modals -->
-    <!-- Use the modals below to showcase details about your portfolio projects! -->
-
-    
-
-</body>
-
+            document.getElementById('button-stop-ws').addEventListener('click', function() {
+               recognizer.stop();
+               log.innerHTML = 'Recognition stopped' + '<br />' + log.innerHTML;
+            });
+            document.getElementById('clear-all').addEventListener('click', function() {
+               transcription.textContent = '';
+               log.textContent = '';
+            });
+         }</script> 
+         </body>
 </html>
