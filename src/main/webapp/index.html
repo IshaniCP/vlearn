@@ -41,7 +41,7 @@
     <!-- Header -->
     <header>
         <div class="container">
-            <div class="intro-text">
+            <div class="intro-text" id="main">
                 <div class="intro-lead-in">Welcome To</div>
                 <div class="intro-heading">VLearn</div>
                 <div id="image"><img src="img/voicecapture.png" height="150" width="150" ></div>
@@ -58,13 +58,14 @@
     <script type="text/javascript">
             speechSynthesis.speak(new SpeechSynthesisUtterance('Welcome to Vlearn'));
             speechSynthesis.speak(new SpeechSynthesisUtterance('Tell log in or sign up'));
+            
+
             setTimeout(function(){
                 document.getElementById("image").className = "fadeImage";
-                
                 window.SpeechRecognition = window.SpeechRecognition        ||
                                     window.webkitSpeechRecognition  ||
                                     null;
-                var qoute = 'null';
+                var qoute = '';
 
                  if (window.SpeechRecognition === null) {
                  } else {
@@ -73,46 +74,76 @@
                      recognizer.language = "si";
                      recognizer.start();
                      recognizer.continuous = true;
-                     while(qoute != 'login'){
+                    //while(qoute != 'login'){
                          recognizer.onresult = function(event){
                             for (var i = event.resultIndex; i < event.results.length; i++) {
-                              if (event.results[i].isFinal) {
+                              if (!event.results[i].isFinal) {
                                  qoute += event.results[i][0].transcript;
-                                  document.getElementById("print").innerHTML = qoute;
+                                 
                               } else {
                                  qoute += event.results[i][0].transcript;
+                                 document.getElementById("print").innerHTML = qoute;
+                                 document.getElementById("image").className = "";
+                                  if(qoute == 'login' || qoute == 'Logan'){
+                                     speechSynthesis.speak(new SpeechSynthesisUtterance('Logged into your account'));
+                                      var start = new Date().getTime();
+                                      var time = 0;
+                                      for(; time < 3000 ; ){
+                                        time = new Date().getTime() - start;
+                                      }
+                                      document.getElementById("print").innerHTML = "10000";
+                                      document.getElementById("main").innerHTML = '<object type="text/html" data="index2.html" ></object>';
+                                      
+                                      //window.open("secondPage.html","main");
+                                     recognizer.onresult = function(event){
+                                         
+                                        for (var i = event.resultIndex; i < event.results.length; i++) {
+                                          if (event.results[i].isFinal) {
+                                             qoute += event.results[i][0].transcript;
+                                              document.getElementById("print").innerHTML = qoute;
+                                          } else {
+                                             qoute += event.results[i][0].transcript;
+                                          }
+                                       }
+
+                                        document.getElementById("image").className = "";
+
+                                        if(qoute == 'login'){
+                                           window.open("index2.html","_self");
+                                            windowopen();
+                                        }
+                                     };
+                                }
                               }
                            }
 
-                            document.getElementById("image").className = "";
-
-                            if(qoute == 'login'){
-                               
-                            }else{
-
-                            }
+                            
                          };
-                     }
-                     if(qoute == 'login'){
-                         speechSynthesis.speak(new SpeechSynthesisUtterance('confirm log in'));
-                         recognizer.onresult = function(event){
-                            for (var i = event.resultIndex; i < event.results.length; i++) {
-                              if (event.results[i].isFinal) {
-                                 qoute += event.results[i][0].transcript;
-                                  document.getElementById("print").innerHTML = qoute;
-                              } else {
-                                 qoute += event.results[i][0].transcript;
-                              }
-                           }
-
-                            document.getElementById("image").className = "";
-
-                            if(qoute == 'login'){
-                               window.open("index2.html","_self");
-                                windowopen();
-                            }
-                         };
-                    }
+                        //qoute = '';
+                   // }
+                     
+//                     setTimeout(function(){
+//                         if(qoute == 'login' || qoute == 'logan'){
+//                             speechSynthesis.speak(new SpeechSynthesisUtterance('confirm log in'));
+//                             recognizer.onresult = function(event){
+//                                for (var i = event.resultIndex; i < event.results.length; i++) {
+//                                  if (event.results[i].isFinal) {
+//                                     qoute += event.results[i][0].transcript;
+//                                      document.getElementById("print").innerHTML = qoute;
+//                                  } else {
+//                                     qoute += event.results[i][0].transcript;
+//                                  }
+//                               }
+//
+//                                document.getElementById("image").className = "";
+//
+//                                if(qoute == 'login'){
+//                                   window.open("index2.html","_self");
+//                                    windowopen();
+//                                }
+//                             };
+//                        }
+//                     },1000);
                      
 
                  }
